@@ -1,0 +1,29 @@
+{
+  "name": "@tsl/tea",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "A Minecraft 3rd-party launcher framework using Node and TypeScript",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "repository": "https://github.com/Teahouse-Studios/Tea.git",
+  "author": "Teahouse Studios <admin@teahou.se>",
+  "license": "AGPL-3.0-or-later",
+  "private": false,
+  "devDependencies": {
+    "@types/eslint": "^7.28.0",
+    "@typescript-eslint/eslint-plugin": "^4.28.4",
+    "@typescript-eslint/parser": "^4.28.4",
+    "eslint": "^7.31.0",
+    "@types/node": "^16.4.0",
+    "typescript": "^4.3.5"
+  },
+  "scripts": {
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "start": "tsc --watch",
+    "build": "tsc"
+  }
+}

@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { MojangAuthError, MojangAuthResponse } from '../types/auth'
+import { MojangAuthResponse } from '../types/auth'
+import { RequestError } from '../types/index'
 
 /**
  * Authorize Minecraft account through Mojang Yggdrasil account system.
@@ -14,7 +15,7 @@ class MojangAuth {
     token?: string,
     agentName: 'Minecraft' | 'Scrolls' = 'Minecraft',
     agentVersion: number = 1
-  ): Promise<MojangAuthResponse | MojangAuthError | undefined> {
+  ): Promise<MojangAuthResponse | undefined> {
     const payload = {
       agent: {
         name: agentName,
@@ -27,7 +28,6 @@ class MojangAuth {
     }
 
     let authResponse: MojangAuthResponse | undefined
-    let authError: MojangAuthError | undefined
 
     await axios.post('/authenticate', payload, {
       baseURL: this.authServer,
@@ -36,16 +36,16 @@ class MojangAuth {
         authResponse = res.data
       })
       .catch((err) => {
-        if (err.response) {
-          authError = err.data
-        } else if (err.request) {
-          throw err.request
-        } else {
-          throw err.message
+        const message: RequestError = {
+          code: err.code || null,
+          name: err.response.error || err.request || null,
+          message: err.response.errorMessage || null,
+          cause: err.response.cause || null
         }
+        throw message
       })
 
-    return authResponse || authError
+    return authResponse
   }
 }
 

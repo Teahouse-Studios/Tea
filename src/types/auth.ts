@@ -1,10 +1,4 @@
-interface MojangAuthError {
-  error: string;
-  errorMessage: string;
-  cause?: string;
-}
-
-interface MojangAuthResponse {
+export interface MojangAuthResponse {
   user: {
     username: string,
     properties: [
@@ -25,9 +19,8 @@ interface MojangAuthResponse {
   selectedProfile: MojangAuthProfile
 }
 
-interface MojangAuthProfile {
+export interface MojangAuthProfile {
   name: string,
   id: string  // It's actually a hex, but it's way too big
 }
 
-export { MojangAuthError, MojangAuthResponse, MojangAuthProfile }

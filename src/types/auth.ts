@@ -1,16 +1,10 @@
 export interface MojangAuthResponse {
   user: {
     username: string,
-    properties: [
-      {
+    properties: Array<{
         name: string,
         value: string,
-      },
-      {
-        name: string,
-        value: string,
-      }
-    ];
+      }>,
     id: string,
   },
   clientToken: string,
@@ -23,4 +17,3 @@ export interface MojangAuthProfile {
   name: string,
   id: string  // It's actually a hex, but it's way too big
 }
-

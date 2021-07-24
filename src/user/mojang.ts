@@ -1,21 +1,26 @@
 import axios from 'axios'
-import { MojangAuthResponse } from '../types/auth'
+import { User } from '.'
+import { getAccountSkinAndCape } from '../api/mojang-api'
+import { MojangAuthProfile, MojangAuthResponse } from '../types/auth'
 import { RequestError } from '../types/index'
+import { MojangApiSkinAndCape } from '../types/mojang-api'
 
 /**
  * Authorize Minecraft account through Mojang Yggdrasil account system.
  * @author Dianliang233 <dianliang@teahou.se>
  */
-class MojangAuth {
+export class MojangUser extends User {
   private authServer = 'https://authserver.mojang.com'
 
-  public async authenticate(
+  constructor (
     username: string,
     password: string,
-    token?: string,
+    clientToken?: string,
     agentName: 'Minecraft' | 'Scrolls' = 'Minecraft',
     agentVersion: number = 1
-  ): Promise<MojangAuthResponse | undefined> {
+  ) {
+    super()
+
     const payload = {
       agent: {
         name: agentName,
@@ -23,17 +28,21 @@ class MojangAuth {
       },
       username: username,
       password: password,
-      clientToken: token,
+      clientToken: clientToken,
       requestUser: true,
     }
 
-    let authResponse: MojangAuthResponse | undefined
-
-    await axios.post('/authenticate', payload, {
+    axios.post('/authenticate', payload, {
       baseURL: this.authServer,
     })
       .then((res) => {
-        authResponse = res.data
+        const d: MojangAuthResponse = res.data
+        this.accessToken = d.accessToken
+        this.clientToken = d.clientToken
+        this.username = d.user.username
+        this.id = d.user.id
+        this.availableProfiles = d.availableProfiles
+        this.selectedProfile = d.selectedProfile
       })
       .catch((err) => {
         const message: RequestError = {
@@ -44,9 +53,14 @@ class MojangAuth {
         }
         throw message
       })
+    
+    getAccountSkinAndCape(this.id).then(res => this.textures = res as MojangApiSkinAndCape)
+  }
 
-    return authResponse
+  public clientToken = ''
+  public availableProfiles: MojangAuthProfile[] = []
+  public selectedProfile: MojangAuthProfile = {
+    name: '',
+    id: ''
   }
 }
-
-export { MojangAuth }
